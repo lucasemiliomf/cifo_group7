@@ -26,7 +26,17 @@ def fps(population):
                 return individual
 
     elif population.optim == "min":
-        raise NotImplementedError
+
+        # Sum total fitness
+        total_fitness = sum([1/i.fitness for i in population])
+        # Get a 'position' on the wheel
+        spin = uniform(0, total_fitness)
+        position = 0
+        # Find individual in the position of the spin
+        for individual in population:
+            position += 1/individual.fitness
+            if position > spin:
+                return individual
 
     else:
         raise Exception("No optimization specified (min or max).")
