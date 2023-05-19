@@ -1,15 +1,15 @@
-from random import shuffle, choice, sample, random
+from random import shuffle, choice, sample, random, uniform
 from operator import attrgetter
 from copy import deepcopy
 
 
 class Individual:
     def __init__(
-        self,
-        representation=None,
-        size=None,
-        replacement=True,
-        valid_set=None,
+            self,
+            representation=None,
+            size=None,
+            replacement=True,
+            valid_set=None,
     ):
         if representation is None:
             if replacement is True:
@@ -85,24 +85,26 @@ class Population:
                     new_pop.append(Individual(representation=offspring2))
 
             if elitism:
+                worst = self.get_elite()
                 if self.optim == "max":
-                    worst = min(new_pop, key=attrgetter("fitness"))
                     if elite.fitness > worst.fitness:
                         new_pop.pop(new_pop.index(worst))
                         new_pop.append(elite)
 
                 elif self.optim == "min":
-                    worst = max(new_pop, key=attrgetter("fitness"))
                     if elite.fitness < worst.fitness:
                         new_pop.pop(new_pop.index(worst))
                         new_pop.append(elite)
 
             self.individuals = new_pop
 
-            if self.optim == "max":
-                print(f'Best Individual: {max(self, key=attrgetter("fitness"))}')
-            elif self.optim == "min":
-                print(f'Best Individual: {min(self, key=attrgetter("fitness"))}')
+            print(f'Best Individual: {self.get_elite()}')
+
+    def get_elite(self):
+        if self.optim == "max":
+            return max(self, key=attrgetter("fitness"))
+        elif self.optim == "min":
+            return min(self, key=attrgetter("fitness"))
 
     def __len__(self):
         return len(self.individuals)
