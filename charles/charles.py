@@ -1,4 +1,4 @@
-from random import shuffle, choice, sample, random, uniform
+from random import choice, sample, random
 from operator import attrgetter
 from copy import deepcopy
 
@@ -22,9 +22,6 @@ class Individual:
 
     def get_fitness(self):
         raise Exception("You need to monkey patch the fitness path.")
-
-    def get_neighbours(self, func, **kwargs):
-        raise Exception("You need to monkey patch the neighbourhood function.")
 
     def index(self, value):
         return self.representation.index(value)
@@ -85,13 +82,14 @@ class Population:
                     new_pop.append(Individual(representation=offspring2))
 
             if elitism:
-                worst = self.get_elite()
                 if self.optim == "max":
+                    worst = min(new_pop, key=attrgetter("fitness"))
                     if elite.fitness > worst.fitness:
                         new_pop.pop(new_pop.index(worst))
                         new_pop.append(elite)
 
                 elif self.optim == "min":
+                    worst = max(new_pop, key=attrgetter("fitness"))
                     if elite.fitness < worst.fitness:
                         new_pop.pop(new_pop.index(worst))
                         new_pop.append(elite)
