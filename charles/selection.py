@@ -1,4 +1,4 @@
-from random import uniform, choice, sample
+from random import uniform, choice
 from operator import attrgetter
 
 
@@ -64,5 +64,3 @@ def tournament_sel(population, size=4):
         return max(tournament, key=attrgetter("fitness"))
     if population.optim == "min":
         return min(tournament, key=attrgetter("fitness"))
-
-
