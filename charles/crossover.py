@@ -106,27 +106,7 @@ def uniform_xo(p1, p2, pc=0.5):
     return offspring1, offspring2
 
 
-def arithmetic_xo(p1, p2):
-    """Implementation of arithmetic crossover/geometric crossover with constant alpha.
-
-    Args:
-        p1 (Individual): First parent for crossover.
-        p2 (Individual): Second parent for crossover.
-
-    Returns:
-        Individuals: Two offspring, resulting from the crossover.
-    """
-    alpha = uniform(0, 1)
-    o1 = [None] * len(p1)
-    o2 = [None] * len(p1)
-    for i in range(len(p1)):
-        o1[i] = p1[i] * alpha + (1 - alpha) * p2[i]
-        o2[i] = p2[i] * alpha + (1 - alpha) * p1[i]
-    return o1, o2
-
-
 if __name__ == '__main__':
-    # p1, p2 = [9, 8, 4, 5, 6, 7, 1, 3, 2, 10], [8, 7, 1, 2, 3, 10, 9, 5, 4, 6]
-    p1, p2 = [0.1, 0.15, 0.3], [0.3, 0.1, 0.2]
-    o1, o2 = arithmetic_xo(p1, p2)
+    p1, p2 = [9, 8, 4, 5, 6, 7, 1, 3, 2, 10], [8, 7, 1, 2, 3, 10, 9, 5, 4, 6]
+    o1, o2 = cycle_xo(p1, p2)
     print(o1, o2)
