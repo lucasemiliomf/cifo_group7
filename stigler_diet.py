@@ -1,8 +1,8 @@
 from charles.charles import Population, Individual
 from data.stigler_diet import nutrients, data
 from charles.selection import fps, tournament_sel
-from charles.mutation import swap_mutation, inversion_mutation
-from charles.crossover import single_point_co, indexes_cycle_xo, uniform_xo, arithmetic_xo
+from charles.mutation import swap_mutation, inversion_mutation, quaternary_mutation
+from charles.crossover import single_point_co, indexes_cycle_xo, uniform_xo
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -108,6 +108,11 @@ best_individual = Individual(
 )
 
 
+# Selection, Crossover and Mutation methods tuning:
+#    It will be performed a grid search with multiple methods of selection, crossover and mutation.
+#    Ideally, all the parameters should be tested.
+#    Since it would require time and computational resources, it was performed only over those methods.
+#    Other parameters were defined manually and empirically in the defining_parameters.py
 def execute_ga(selection, xo, mutation):
     """A function to execute the Genetic Algorithm, given a selection, crossover and mutation method as parameters.
 
@@ -127,11 +132,11 @@ def execute_ga(selection, xo, mutation):
         pop.evolve(
             gens=1,
             xo_prob=0.9,
-            mut_prob=0.1,
+            mut_prob=0.2,
             select=selection,
             mutate=mutation,
             crossover=xo,
-            elitism=True)
+            elitism=False)
 
         # Get fitness stats for this generation
         fitness_values = [ind.get_fitness() for ind in pop.individuals]
@@ -145,20 +150,24 @@ def execute_ga(selection, xo, mutation):
 
 # Defining our parameters for selection, crossover and mutation to perform a grid search.
 selection_methods = [fps, tournament_sel]
-xo_methods = [single_point_co, indexes_cycle_xo, uniform_xo, arithmetic_xo]
-mutation_methods = [swap_mutation, inversion_mutation]
+xo_methods = [single_point_co, indexes_cycle_xo, uniform_xo]
+mutation_methods = [quaternary_mutation, swap_mutation, inversion_mutation]
 
 results_df = pd.DataFrame(columns=['selection_method', 'mutation_method', 'crossover_method', 'average_fitness'])
 
 fitness_data = {}
 
 # Grid Search
+# Repeat over each selection method
 for selection in selection_methods:
+    # Repeat over each crossover method
     for xo in xo_methods:
+        # Repeat over each mutation method
         for mutation in mutation_methods:
             # Defining parameters to calculate average fitness over a certain number of executions
             avg_fitness = 0
             executions = 30
+            # Carry out GA with the current parameters several times to calculate average fitness
             for i in range(executions):
                 # Executing GA with current parameters and getting fitness
                 execution_elite, fitness_stats = execute_ga(selection, xo, mutation)
@@ -279,7 +288,8 @@ with open("best_individual.txt", "w") as file:
 
     file.write("\nList of nutrients consumed in a year for this set of foods")
     for i in range(len(nutrients)):
-        file.write(f"Consumed {list_values_elite[i + 1]} {nutrients[i][0]} in a year (Required {nutrients[i][1] * 365})\n")
+        file.write(
+            f"Consumed {list_values_elite[i + 1]} {nutrients[i][0]} in a year (Required {nutrients[i][1] * 365})\n")
 
     file.write(f"\nCost for this solution was {best_individual.get_fitness():.0f} cents\n")
 
