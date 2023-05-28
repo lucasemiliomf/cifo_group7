@@ -59,10 +59,7 @@ class Population:
             new_pop = []
 
             if elitism:
-                if self.optim == "max":
-                    elite = deepcopy(max(self.individuals, key=attrgetter("fitness")))
-                elif self.optim == "min":
-                    elite = deepcopy(min(self.individuals, key=attrgetter("fitness")))
+                elite = self.get_elite()
 
             while len(new_pop) < self.size:
                 parent1, parent2 = select(self), select(self)
